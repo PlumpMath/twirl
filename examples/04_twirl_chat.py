@@ -7,10 +7,11 @@ import random
 from twirl import Reactor, Factory, Deferred
 from twirl.protocols import LineReceiver
 
+# Europe section on https://freenode.net/irc_servers.shtml
 irc_servers = {
     "freenode": [
-        "adams.freenode.net",        # ???
-        "barjavel.freenode.net",     # ???
+        "adams.freenode.net",        # Budapest, HU
+        "barjavel.freenode.net",     # Paris, FR
         "calvino.freenode.net",      # Milan, IT
         "cameron.freenode.net",      # Vilnius, LT
         "hitchcock.freenode.net",    # Sofia, BG
