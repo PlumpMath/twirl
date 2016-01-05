@@ -14,6 +14,9 @@ class Reactor(object):
         self.__log = logging.getLogger("twirl.reactor")
         self._loop = loop
 
+    def dispose(self):
+        pass
+
     @staticmethod
     def default_reactor():
         loop = pyuv.Loop.default_loop()
@@ -24,12 +27,14 @@ class Reactor(object):
     def createResolver(self):
         return Resolver(loop=self._loop)
 
-    def _on_sig_int_cb(self):
-        print "Ctrl+C"
-
     def _initialize(self):
-        signal_h = pyuv.Signal(self._loop)
-        signal_h.start(self._on_sig_int_cb, signal.SIGINT)
+        def signal_cb(signal_handle, signal_num):
+            self._loop.stop()
+        #
+        sig = pyuv.Signal(self._loop)
+        sig.start(signal_cb, signal.SIGINT)
+        #
+        return sig
 
     def stop(self):
         self._loop.stop()
@@ -104,9 +109,8 @@ class Reactor(object):
 
     def createTTY(self, stream, protocol):
         fd = stream.fileno()
-        print fd
         #
-        p = protocol()
+        p = protocol
         #
         tty = pyuv.TTY(self._loop, fd, True)
         #
@@ -116,14 +120,13 @@ class Reactor(object):
             if error:
                 reason = pyuv.errno.strerror(error)
                 self.__log.error(reason)
-                p.connectionLost(reason=reason)            
+                p.connectionLost(reason=reason)
             else:
                 if data is None:
                     handle.close()
                 else:
-                    print("C> {data!r}".format(data=data))
-        #                 
+                    p.dataReceived(data)
+        #
         tty.start_read(read_cb)
         #
-        print tty
         return tty
