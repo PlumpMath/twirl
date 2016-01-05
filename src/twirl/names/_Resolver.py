@@ -9,14 +9,15 @@ class Resolver(object):
     def __init__(self, loop):
         self._loop = loop
                  
-    def lookupAddress(self, address):
+    def lookupAddress(self, address, d=None):
         """ Lookup A record(s)
         """
-        d = Deferred()
+        if d is None:
+            d = Deferred()
+            d.pause()
         #
         def callback2(result, errorno):
-            for ai in result:
-                print ai
+            d.callback(result)
         #
         pyuv.dns.getaddrinfo(self._loop, address, callback=callback2)
         #

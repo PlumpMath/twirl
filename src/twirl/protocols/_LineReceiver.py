@@ -1,7 +1,12 @@
 #
 
-class LineReceiver(object):
+from _BaseProtocol import BaseProtocol
+
+
+class LineReceiver(BaseProtocol):
     def __init__(self):
+        BaseProtocol.__init__(self)
+        #
         self.line_mode = 1
         self._buffer = b''
         self._busyReceiving = False
